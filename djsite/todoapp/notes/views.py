@@ -8,10 +8,6 @@ from rest_framework import status
 from .models import Todo
 
 
-def index(request):
-    return HttpResponse('Страница приложения notes.')
-
-
 class TodoListView(APIView):
     @swagger_auto_schema(
         operation_description="Get list of all todos.",
