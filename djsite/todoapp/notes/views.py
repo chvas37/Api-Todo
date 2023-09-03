@@ -17,3 +17,37 @@ class TodoListView(APIView):
         todos = Todo.objects.all()
         serializer = TodoSerializer(todos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = TodoSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        post_new = Todo.objects.create(
+            title=request.data['title'],
+            description=request.data['description']
+        )
+        # serializer = TodoSerializer(post_new)
+        return Response({'post': serializer.data}, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({"error": "Method PUT not allowed"})
+
+        try:
+            instance = Todo.objects.get(pk=pk)
+        except:
+            return Response({"error": "Object does not exists"})
+
+        serializer = TodoSerializer(data=request.data,instance=instance)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"post": serializer.data})
+
+    def delete(self, request, *args, **kwargs):
+        pk = kwargs.get("pk", None)
+        if not pk:
+            return Response({'error': "Method DELETE not allowed"})
+
+        return Response({'post': "delete post" + str(pk)})
